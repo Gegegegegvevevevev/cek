@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Cek Masa Aktif Kartu SIM Otomatis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --telkomsel: #e2001a;
+            --tri: #ff6a00;
+            --xl: #00a2e8;
+            --indosat: #ff6600;
+            --smartfren: #f5a623;
+            --axis: #ff0000;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --light: #f8f9fa;
+            --dark: #2c3e50;
+            --gray: #7f8c8d;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --gradient-primary: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(to right, var(--telkomsel), var(--tri), var(--xl), var(--indosat), var(--smartfren));
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .logo i {
+            font-size: 3.5rem;
+            background: linear-gradient(45deg, var(--telkomsel), var(--xl));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        h1 {
+            color: var(--dark);
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, var(--telkomsel), var(--tri), var(--xl));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            color: var(--gray);
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-top: 4px solid transparent;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-main {
+            border-top-color: var(--telkomsel);
+        }
+        
+        .card-info {
+            border-top-color: var(--xl);
+        }
+        
+        .card-history {
+            border-top-color: var(--indosat);
+            grid-column: span 2;
+        }
+        
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            font-size: 1.6rem;
+            color: var(--dark);
+        }
+        
+        .card-title i {
+            font-size: 1.8rem;
+        }
+        
+        .operator-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .operator-btn {
+            padding: 15px 5px;
+            border: 2px solid #e1e5eb;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .operator-btn i {
+            font-size: 1.8rem;
+        }
+        
+        .operator-btn.active {
+            border-color: currentColor;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .operator-telkomsel {
+            color: var(--telkomsel);
+        }
+        
+        .operator-tri {
+            color: var(--tri);
+        }
+        
+        .operator-xl {
+            color: var(--xl);
+        }
+        
+        .operator-indosat {
+            color: var(--indosat);
+        }
+        
+        .operator-smartfren {
+            color: var(--smartfren);
+        }
+        
+        .operator-axis {
+            color: var(--axis);
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 1.1rem;
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+            font-size: 1.2rem;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 16px 15px 16px 50px;
+            border: 2px solid #e1e5eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--xl);
+        }
+        
+        button {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 18px 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 10px;
+            display: none;
+            border-left: 5px solid transparent;
+        }
+        
+        .result.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        .result-success {
+            background-color: rgba(46, 204, 113, 0.1);
+            border-left-color: var(--success);
+        }
+        
+        .result-warning {
+            background-color: rgba(243, 156, 18, 0.1);
+            border-left-color: var(--warning);
+        }
+        
+        .result-danger {
+            background-color: rgba(231, 76, 60, 0.1);
+            border-left-color: var(--danger);
+        }
+        
+        .result-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .result-title {
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .result-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .detail-item {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 18px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .detail-label {
+            font-size: 0.95rem;
+            color: var(--gray);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .detail-value {
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 1rem;
+            gap: 8px;
+        }
+        
+        .status-active {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: #27ae60;
+        }
+        
+        .status-warning {
+            background-color: rgba(243, 156, 18, 0.2);
+            color: #d35400;
+        }
+        
+        .status-expired {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #c0392b;
+        }
+        
+        .status-unknown {
+            background-color: rgba(127, 140, 141, 0.2);
+            color: #7f8c8d;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--xl);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        .operator-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        th {
+            background: var(--gradient-primary);
+            color: white;
+            font-weight: 600;
+            padding: 18px 15px;
+            text-align: left;
+        }
+        
+        td {
+            padding: 18px 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .operator-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--gray);
+        }
+        
+        .auto-detect {
+            display: inline-block;
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: var(--gray);
+            font-size: 0.95rem;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-top: 30px;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: var(--xl);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 1100px) {
+            .card-history {
+                grid-column: span 1;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .operator-selector {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .logo {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .result-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .operator-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            header {
+                padding: 20px 15px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            th, td {
+                padding: 12px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-sim-card"></i>
+                <h1>Cek Masa Aktif Kartu SIM Otomatis</h1>
+            </div>
+            <p class="subtitle">Cek status kartu SIM Anda secara otomatis hanya dengan nomor telepon. Sistem akan mendeteksi operator dan memperkirakan masa aktif kartu Anda.</p>
+        </header>
+        
+        <main class="dashboard">
+            <!-- Kartu Pengecekan Utama -->
+            <div class="card card-main">
+                <div class="card-title">
+                    <i class="fas fa-search"></i>
+                    <h2>Cek Status Kartu SIM</h2>
+                </div>
+                
+                <div class="operator-selector">
+                    <div class="operator-btn operator-telkomsel active" data-operator="telkomsel">
+                        <i class="fas fa-bolt"></i>
+                        <span>Telkomsel</span>
+                    </div>
+                    <div class="operator-btn operator-xl" data-operator="xl">
+                        <i class="fas fa-bolt"></i>
+                        <span>XL Axiata</span>
+                    </div>
+                    <div class="operator-btn operator-indosat" data-operator="indosat">
+                        <i class="fas fa-globe"></i>
+                        <span>Indosat</span>
+                    </div>
+                    <div class="operator-btn operator-tri" data-operator="tri">
+                        <i class="fas fa-fire"></i>
+                        <span>Tri (3)</span>
+                    </div>
+                    <div class="operator-btn operator-smartfren" data-operator="smartfren">
+                        <i class="fas fa-wifi"></i>
+                        <span>Smartfren</span>
+                    </div>
+                    <div class="operator-btn operator-axis" data-operator="axis">
+                        <i class="fas fa-satellite"></i>
+                        <span>AXIS</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phoneNumber"><i class="fas fa-mobile-alt"></i> Masukkan Nomor Telepon</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-phone"></i>
+                        <input type="text" id="phoneNumber" placeholder="Contoh: 081234567890" maxlength="15">
+                    </div>
+                    <div class="auto-detect">
+                        <i class="fas fa-robot"></i> Sistem akan mendeteksi operator secara otomatis
+                    </div>
+                </div>
+                
+                <button id="checkButton">
+                    <i class="fas fa-search"></i> Cek Status Sekarang
+                </button>
+                
+                <!-- Loading Indicator -->
+                <div class="loading" id="loadingIndicator">
+                    <div class="spinner"></div>
+                    <p>Mengecek status kartu SIM...</p>
+                </div>
+                
+                <!-- Hasil Pengecekan -->
+                <div id="result" class="result">
+                    <div class="result-header">
+                        <div class="result-title">
+                            <i class="fas fa-clipboard-check" id="resultIcon"></i>
+                            <span id="resultTitle">Status Kartu SIM</span>
+                        </div>
+                        <div id="resultStatus" class="status-badge">-</div>
+                    </div>
+                    <p id="resultMessage">Hasil pengecekan akan muncul di sini.</p>
+                    
+                    <div class="result-details">
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i class="fas fa-phone"></i>
+                                <span>Nomor Telepon</span>
+                            </div>
+                            <div class="detail-value" id="detailPhoneNumber">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i class="fas fa-network-wired"></i>
+                                <span>Operator</span>
+                            </div>
+                            <div class="detail-value" id="detailOperator">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i class="fas fa-bolt"></i>
+                                <span>Status Kartu</span>
+                            </div>
+                            <div class="detail-value" id="detailCardStatus">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">
+                                <i class="fas fa-clock"></i>
+                                <span>Perkiraan Masa Aktif</span>
+                            </div>
+                            <div class="detail-value" id="detailRemainingTime">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Kartu Informasi -->
+            <div class="card card-info">
+                <div class="card-title">
+                    <i class="fas fa-info-circle"></i>
+                    <h2>Informasi Operator</h2>
+                </div>
+                
+                <div style="margin-bottom: 25px;">
+                    <h3 style="margin-bottom: 15px; color: var(--dark);"><i class="fas fa-mobile-alt"></i> Kode Operator</h3>
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                        <p>Sistem mendeteksi operator berdasarkan kode awal nomor:</p>
+                        <ul style="margin-top: 15px; margin-left: 20px;">
+                            <li><strong>0811-0815:</strong> Telkomsel</li>
+                            <li><strong>0817-0819:</strong> XL Axiata</li>
+                            <li><strong>0855-0859:</strong> Indosat</li>
+                            <li><strong>0895-0899:</strong> Tri (3)</li>
+                            <li><strong>0881-0889:</strong> Smartfren</li>
+                            <li><strong>0831-0838:</strong> AXIS</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 25px;">
+                    <h3 style="margin-bottom: 15px; color: var(--dark);"><i class="fas fa-lightbulb"></i> Cara Menjaga Kartu Aktif</h3>
+                    <div style="background: rgba(46, 204, 113, 0.1); padding: 20px; border-radius: 10px;">
+                        <ul style="margin-left: 20px;">
+                            <li>Lakukan panggilan/SMS minimal 1x dalam 30 hari</li>
+                            <li>Isi pulsa secara berkala</li>
+                            <li>Aktifkan paket data atau layanan lainnya</li>
+                            <li>Gunakan kartu untuk transaksi digital</li>
+                            <li>Cek status secara berkala dengan alat ini</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="operator-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="activeCards">0</div>
+                        <div class="stat-label">Kartu Aktif</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="expiredCards">0</div>
+                        <div class="stat-label">Kartu Nonaktif</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Kartu Riwayat -->
+            <div class="card card-history">
+                <div class="card-title">
+                    <i class="fas fa-history"></i>
+                    <h2>Riwayat Pengecekan</h2>
+                </div>
+                
+                <div class="table-container">
+                    <table id="historyTable">
+                        <thead>
+                            <tr>
+                                <th>Waktu</th>
+                                <th>Operator</th>
+                                <th>Nomor</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyBody">
+                            <!-- Data riwayat akan dimasukkan oleh JavaScript -->
+                        </tbody>
+                    </table>
+                    <div id="noHistory" class="no-data">
+                        <i class="fas fa-history fa-3x" style="margin-bottom: 15px; color: #e1e5eb;"></i>
+                        <p>Belum ada riwayat pengecekan. Cek status kartu SIM Anda sekarang!</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>&copy; 2023 Dashboard Cek Masa Aktif Kartu SIM Otomatis. Semua hak dilindungi.</p>
+            <p>Informasi yang ditampilkan adalah perkiraan berdasarkan algoritma. Untuk status resmi, hubungi operator terkait.</p>
+            <div class="footer-links">
+                <a href="#" id="clearHistory"><i class="fas fa-trash"></i> Hapus Riwayat</a>
+                <a href="#" id="checkSample"><i class="fas fa-vial"></i> Cek Contoh</a>
+                <a href="#"><i class="fas fa-question-circle"></i> Bantuan</a>
+                <a href="#"><i class="fas fa-share-alt"></i> Bagikan</a>
+            </div>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set nomor telepon default
+            document.getElementById('phoneNumber').value = '0812' + Math.floor(1000000 + Math.random() * 9000000);
+            
+            // Operator selector buttons
+            const operatorButtons = document.querySelectorAll('.operator-btn');
+            
+            operatorButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    operatorButtons.forEach(b => b.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                });
+            });
+            
+            // Deteksi operator otomatis berdasarkan nomor
+            document.getElementById('phoneNumber').addEventListener('input', function() {
+                const phoneNumber = this.value.trim();
+                detectOperatorFromNumber(phoneNumber);
+            });
+            
+            // Inisialisasi riwayat dari localStorage atau data default
+            let checkHistory = JSON.parse(localStorage.getItem('simAutoCheckHistory')) || [];
+            
+            // Update statistik
+            updateStats();
+            
+            // Tampilkan riwayat jika ada
+            displayHistory(checkHistory);
+            
+            // Event listener untuk tombol cek
+            document.getElementById('checkButton').addEventListener('click', function() {
+                checkSIMStatusAuto();
+            });
+            
+            // Event listener untuk hapus riwayat
+            document.getElementById('clearHistory').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (confirm('Apakah Anda yakin ingin menghapus semua riwayat pengecekan?')) {
+                    checkHistory = [];
+                    localStorage.removeItem('simAutoCheckHistory');
+                    displayHistory(checkHistory);
+                    updateStats();
+                }
+            });
+            
+            // Event listener untuk cek contoh
+            document.getElementById('checkSample').addEventListener('click', function(e) {
+                e.preventDefault();
+                // Contoh nomor untuk berbagai operator
+                const sampleNumbers = [
+                    '08123456789', // Telkomsel
+                    '08176543210', // XL
+                    '08581234567', // Indosat
+                    '08951234567', // Tri
+                    '08811223344', // Smartfren
+                    '08314567890'  // AXIS
+                ];
+                const randomSample = sampleNumbers[Math.floor(Math.random() * sampleNumbers.length)];
+                document.getElementById('phoneNumber').value = randomSample;
+                detectOperatorFromNumber(randomSample);
+                setTimeout(checkSIMStatusAuto, 300);
+            });
+            
+            // Fungsi untuk mendeteksi operator dari nomor telepon
+            function detectOperatorFromNumber(phoneNumber) {
+                if (!phoneNumber || phoneNumber.length < 4) return;
+                
+                const prefix = phoneNumber.substring(0, 4);
+                let operator = '';
+                
+                // Deteksi berdasarkan prefix nomor Indonesia
+                if (prefix.startsWith('0811') || prefix.startsWith('0812') || 
+                    prefix.startsWith('0813') || prefix.startsWith('0821') || 
+                    prefix.startsWith('0822') || prefix.startsWith('0823') ||
+                    prefix.startsWith('0852') || prefix.startsWith('0853') ||
+                    prefix.startsWith('0851')) {
+                    operator = 'telkomsel';
+                } else if (prefix.startsWith('0817') || prefix.startsWith('0818') || 
+                          prefix.startsWith('0819') || prefix.startsWith('0859') ||
+                          prefix.startsWith('0877') || prefix.startsWith('0878')) {
+                    operator = 'xl';
+                } else if (prefix.startsWith('0855') || prefix.startsWith('0856') || 
+                          prefix.startsWith('0857') || prefix.startsWith('0858') ||
+                          prefix.startsWith('0814') || prefix.startsWith('0815') ||
+                          prefix.startsWith('0816')) {
+                    operator = 'indosat';
+                } else if (prefix.startsWith('0895') || prefix.startsWith('0896') || 
+                          prefix.startsWith('0897') || prefix.startsWith('0898') ||
+                          prefix.startsWith('0899')) {
+                    operator = 'tri';
+                } else if (prefix.startsWith('0881') || prefix.startsWith('0882') || 
+                          prefix.startsWith('0883') || prefix.startsWith('0884') ||
+                          prefix.startsWith('0885') || prefix.startsWith('0886') ||
+                          prefix.startsWith('0887') || prefix.startsWith('0888') ||
+                          prefix.startsWith('0889')) {
+                    operator = 'smartfren';
+                } else if (prefix.startsWith('0831') || prefix.startsWith('0832') || 
+                          prefix.startsWith('0833') || prefix.startsWith('0838')) {
+                    operator = 'axis';
+                }
+                
+                // Update operator selector jika terdeteksi
+                if (operator) {
+                    operatorButtons.forEach(btn => {
+                        btn.classList.remove('active');
+                        if (btn.getAttribute('data-operator') === operator) {
+                            btn.classList.add('active');
+                        }
+                    });
+                }
+            }
+            
+            // Fungsi untuk mengecek status kartu SIM secara otomatis
+            function checkSIMStatusAuto() {
+                const phoneNumber = document.getElementById('phoneNumber').value.trim();
+                
+                // Validasi input
+                if (!phoneNumber || phoneNumber.length < 10 || phoneNumber.length > 15 || isNaN(phoneNumber)) {
+                    alert('Harap masukkan nomor telepon yang valid (10-15 digit angka).');
+                    return;
+                }
+                
+                // Dapatkan operator yang dipilih
+                let selectedOperator = '';
+                operatorButtons.forEach(btn => {
+                    if (btn.classList.contains('active')) {
+                        selectedOperator = btn.getAttribute('data-operator');
+                    }
+                });
+                
+                // Jika tidak ada operator terpilih, coba deteksi dari nomor
+                if (!selectedOperator) {
+                    detectOperatorFromNumber(phoneNumber);
+                    operatorButtons.forEach(btn => {
+                        if (btn.classList.contains('active')) {
+                            selectedOperator = btn.getAttribute('data-operator');
+                        }
+                    });
+                }
+                
+                // Tampilkan loading
+                document.getElementById('loadingIndicator').classList.add('active');
+                document.getElementById('result').classList.remove('active');
+                
+                // Simulasi proses pengecekan (dalam aplikasi nyata ini akan request ke API)
+                setTimeout(() => {
+                    processSIMCheck(phoneNumber, selectedOperator);
+                    document.getElementById('loadingIndicator').classList.remove('active');
+                }, 1500);
+            }
+            
+            // Fungsi untuk memproses pengecekan kartu SIM
+            function processSIMCheck(phoneNumber, operator) {
+                // Format nomor telepon
+                const formattedPhoneNumber = formatPhoneNumber(phoneNumber);
+                
+                // Tentukan status berdasarkan algoritma simulasi
+                // Dalam aplikasi nyata, ini akan berdasarkan data riil dari operator
+                const checkResult = simulateSIMCheck(phoneNumber, operator);
+                
+                // Tampilkan hasil
+                const resultDiv = document.getElementById('result');
+                resultDiv.className = `result active ${checkResult.resultClass}`;
+                
+                // Update konten hasil
+                document.getElementById('resultTitle').textContent = `Status: ${getOperatorName(operator)}`;
+                document.getElementById('resultIcon').className = checkResult.icon;
+                
+                document.getElementById('resultStatus').textContent = checkResult.statusText;
+                document.getElementById('resultStatus').className = `status-badge ${checkResult.statusClass}`;
+                
+                document.getElementById('resultMessage').textContent = checkResult.message;
+                
+                // Update detail
+                document.getElementById('detailPhoneNumber').textContent = formattedPhoneNumber;
+                document.getElementById('detailOperator').textContent = getOperatorName(operator);
+                document.getElementById('detailCardStatus').textContent = checkResult.statusText;
+                document.getElementById('detailRemainingTime').textContent = checkResult.remainingTime;
+                
+                // Tambahkan ke riwayat
+                const newCheck = {
+                    id: Date.now(),
+                    phoneNumber: phoneNumber,
+                    operator: operator,
+                    timestamp: new Date().toISOString(),
+                    status: checkResult.status,
+                    statusText: checkResult.statusText
+                };
+                
+                checkHistory.unshift(newCheck);
+                
+                // Simpan ke localStorage (maksimal 20 entri)
+                if (checkHistory.length > 20) {
+                    checkHistory = checkHistory.slice(0, 20);
+                }
+                
+                localStorage.setItem('simAutoCheckHistory', JSON.stringify(checkHistory));
+                
+                // Perbarui tampilan riwayat dan statistik
+                displayHistory(checkHistory);
+                updateStats();
+            }
+            
+            // Fungsi simulasi pengecekan kartu SIM
+            function simulateSIMCheck(phoneNumber, operator) {
+                // Hasil acak berdasarkan pola tertentu
+                // Digit terakhir nomor digunakan untuk menentukan status (untuk simulasi)
+                const lastDigit = parseInt(phoneNumber.slice(-1));
+                
+                let status, statusClass, statusText, resultClass, icon, message, remainingTime;
+                
+                // Algoritma simulasi status berdasarkan digit terakhir
+                if (lastDigit >= 0 && lastDigit <= 5) {
+                    // Status: Aktif
+                    status = 'active';
+                    statusClass = 'status-active';
+                    statusText = 'Aktif';
+                    resultClass = 'result-success';
+                    icon = 'fas fa-check-circle';
+                    
+                    const monthsActive = (lastDigit + 1) * 2;
+                    remainingTime = `${monthsActive} bulan lagi`;
+                    message = `Kartu SIM ${getOperatorName(operator)} Anda aktif. Perkiraan masih aktif untuk ${monthsActive} bulan ke depan.`;
+                } else if (lastDigit >= 6 && lastDigit <= 8) {
+                    // Status: Perhatian (mendekati kadaluarsa)
+                    status = 'warning';
+                    statusClass = 'status-warning';
+                    statusText = 'Perhatian';
+                    resultClass = 'result-warning';
+                    icon = 'fas fa-exclamation-triangle';
+                    
+                    const daysLeft = (lastDigit - 5) * 15;
+                    remainingTime = `${daysLeft} hari lagi`;
+                    message = `Kartu SIM ${getOperatorName(operator)} Anda masih aktif tetapi mendekati masa tenggang. Segera lakukan aktivitas.`;
+                } else {
+                    // Status: Tidak aktif
+                    status = 'expired';
+                    statusClass = 'status-expired';
+                    statusText = 'Tidak Aktif';
+                    resultClass = 'result-danger';
+                    icon = 'fas fa-times-circle';
+                    
+                    const daysExpired = (lastDigit - 8) * 10;
+                    remainingTime = `Kadaluarsa`;
+                    message = `Kartu SIM ${getOperatorName(operator)} Anda tidak aktif. Kemungkinan nomor sudah diblokir oleh operator.`;
+                }
+                
+                // Tambahkan variasi berdasarkan operator
+                const operatorFactors = {
+                    'telkomsel': { grace: '90-180 hari', activeRate: 0.85 },
+                    'xl': { grace: '90-150 hari', activeRate: 0.80 },
+                    'indosat': { grace: '60-180 hari', activeRate: 0.78 },
+                    'tri': { grace: '60-120 hari', activeRate: 0.75 },
+                    'smartfren': { grace: '30-90 hari', activeRate: 0.70 },
+                    'axis': { grace: '60-120 hari', activeRate: 0.65 }
+                };
+                
+                const opFactor = operatorFactors[operator] || { grace: '60-180 hari', activeRate: 0.75 };
+                
+                if (status === 'warning') {
+                    message += ` Masa tenggang ${getOperatorName(operator)}: ${opFactor.grace}.`;
+                }
+                
+                return {
+                    status,
+                    statusClass,
+                    statusText,
+                    resultClass,
+                    icon,
+                    message,
+                    remainingTime
+                };
+            }
+            
+            // Fungsi untuk mendapatkan nama operator
+            function getOperatorName(operatorCode) {
+                const operatorNames = {
+                    'telkomsel': 'Telkomsel',
+                    'tri': 'Tri (3)',
+                    'xl': 'XL Axiata',
+                    'indosat': 'Indosat',
+                    'smartfren': 'Smartfren',
+                    'axis': 'AXIS'
+                };
+                
+                return operatorNames[operatorCode] || 'Operator';
+            }
+            
+            // Fungsi untuk memformat nomor telepon
+            function formatPhoneNumber(phone) {
+                // Format: 0812-3456-7890
+                if (phone.length >= 10) {
+                    return phone.replace(/(\d{4})(\d{4})(\d{0,})/, '$1-$2-$3');
+                }
+                return phone;
+            }
+            
+            // Fungsi untuk memperbarui statistik
+            function updateStats() {
+                let activeCount = 0;
+                let expiredCount = 0;
+                
+                checkHistory.forEach(item => {
+                    if (item.status === 'active') {
+                        activeCount++;
+                    } else if (item.status === 'expired') {
+                        expiredCount++;
+                    }
+                });
+                
+                document.getElementById('activeCards').textContent = activeCount;
+                document.getElementById('expiredCards').textContent = expiredCount;
+            }
+            
+            // Fungsi untuk menampilkan riwayat
+            function displayHistory(history) {
+                const historyBody = document.getElementById('historyBody');
+                const noHistory = document.getElementById('noHistory');
+                
+                if (history.length === 0) {
+                    historyBody.innerHTML = '';
+                    noHistory.style.display = 'block';
+                    return;
+                }
+                
+                noHistory.style.display = 'none';
+                historyBody.innerHTML = '';
+                
+                history.forEach(item => {
+                    const row = document.createElement('tr');
+                    
+                    // Format waktu
+                    const checkTime = new Date(item.timestamp);
+                    const formattedTime = checkTime.toLocaleTimeString('id-ID', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    const formattedDate = checkTime.toLocaleDateString('id-ID', {
+                        day: '2-digit',
+                        month: 'short'
+                    });
+                    
+                    // Format nomor telepon
+                    const formattedPhone = formatPhoneNumber(item.phoneNumber).substring(0, 10) + '...';
+                    
+                    // Tentukan ikon operator
+                    let operatorIcon, operatorColor;
+                    switch(item.operator) {
+                        case 'telkomsel':
+                            operatorIcon = 'fas fa-bolt';
+                            operatorColor = 'var(--telkomsel)';
+                            break;
+                        case 'tri':
+                            operatorIcon = 'fas fa-fire';
+                            operatorColor = 'var(--tri)';
+                            break;
+                        case 'xl':
+                            operatorIcon = 'fas fa-bolt';
+                            operatorColor = 'var(--xl)';
+                            break;
+                        case 'indosat':
+                            operatorIcon = 'fas fa-globe';
+                            operatorColor = 'var(--indosat)';
+                            break;
+                        case 'smartfren':
+                            operatorIcon = 'fas fa-wifi';
+                            operatorColor = 'var(--smartfren)';
+                            break;
+                        case 'axis':
+                            operatorIcon = 'fas fa-satellite';
+                            operatorColor = 'var(--axis)';
+                            break;
+                        default:
+                            operatorIcon = 'fas fa-sim-card';
+                            operatorColor = 'var(--gray)';
+                    }
+                    
+                    // Tentukan status dan kelas
+                    let statusClass;
+                    if (item.status === 'active') {
+                        statusClass = 'status-active';
+                    } else if (item.status === 'warning') {
+                        statusClass = 'status-warning';
+                    } else {
+                        statusClass = 'status-expired';
+                    }
+                    
+                    row.innerHTML = `
+                        <td>
+                            <div>${formattedDate}</div>
+                            <div style="font-size: 0.85rem; color: var(--gray);">${formattedTime}</div>
+                        </td>
+                        <td>
+                            <div class="operator-cell">
+                                <i class="${operatorIcon}" style="color: ${operatorColor}"></i>
+                                <span>${getOperatorName(item.operator)}</span>
+                            </div>
+                        </td>
+                        <td>${formattedPhone}</td>
+                        <td><span class="status-badge ${statusClass}">${item.statusText}</span></td>
+                        <td>
+                            <button style="width: auto; padding: 8px 12px; font-size: 0.9rem;" onclick="recheckNumber('${item.phoneNumber}', '${item.operator}')">
+                                <i class="fas fa-redo"></i> Cek Ulang
+                            </button>
+                        </td>
+                    `;
+                    
+                    historyBody.appendChild(row);
+                });
+            }
+            
+            // Fungsi global untuk cek ulang nomor dari riwayat
+            window.recheckNumber = function(phoneNumber, operator) {
+                document.getElementById('phoneNumber').value = phoneNumber;
+                
+                // Set operator yang sesuai
+                operatorButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.getAttribute('data-operator') === operator) {
+                        btn.classList.add('active');
+                    }
+                });
+                
+                // Jalankan pengecekan
+                checkSIMStatusAuto();
+            };
+            
+            // Deteksi operator otomatis saat halaman dimuat
+            detectOperatorFromNumber(document.getElementById('phoneNumber').value);
+        });
+    </script>
+</body>
+</html>
